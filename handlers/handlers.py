@@ -5,10 +5,11 @@ from aiogram.types import CallbackQuery, Message, ContentType
 
 router = Router()
 
-
 @router.message(CommandStart())
-async def process_start_command(msg: Message):
+async def process_start_command(msg: Message, db):
+    await db.connect()
     await msg.answer(text='hello')
+    await db.close()
 
 @router.message()
 async def send_answer(msg: Message):

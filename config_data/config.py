@@ -10,6 +10,10 @@ class DatabaseConfig:
     db_password: str
     db_port: str
 
+    def DSN(self) -> str:
+        return (f'postgresql://{self.db_user}:{self.db_password}@'
+                f'{self.db_host}:{self.db_port}/{self.database}')
+
 
 @dataclass
 class TgBot:
@@ -33,3 +37,7 @@ def load_config(path: str|None = None) -> Config:
                                db_password=env('db_password'),
                                db_port=env('db_port'))
         )
+
+if __name__ == '__main__':
+    conf = load_config()
+    print(conf.db.DSN())

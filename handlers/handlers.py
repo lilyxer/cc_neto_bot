@@ -1,25 +1,22 @@
-import sqlalchemy.exc
-from aiogram.types import Message, CallbackQuery
-from aiogram import F, Router
-from aiogram.fsm.context import FSMContext
-from aiogram.filters import Command, CommandStart, StateFilter
-from aiogram.fsm.state import default_state
-from states.states import FSMInProgress
-from database.models import User, Word, UserAddWord
-from sqlalchemy.ext.asyncio import AsyncSession
-from aiohttp import ClientSession
-from keyboards.keyboards import BotKeyBoardStart, BotKeyBoard, BotKeyBoardProgres
-from loader import scheduler
-from sqlalchemy import select, desc, insert
 from random import choice
 
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from aiogram import F, Router
+from aiogram.types import Message, CallbackQuery
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.fsm.context import FSMContext
+from aiogram.filters import CommandStart, StateFilter
+from aiogram.fsm.state import default_state
+from keyboards.keyboards import BotKeyBoardStart, BotKeyBoard, BotKeyBoardProgres
+from sqlalchemy import select, desc, insert
+from sqlalchemy.ext.asyncio import AsyncSession
+from states.states import FSMInProgress
+
 from lexicon.lexicon import answers
 from core.scripts import get_samples, get_words
+from database.models import User, Word, UserAddWord
+
 
 router = Router()
-
 
 @router.message(CommandStart(), StateFilter(default_state))
 async def process_start_command(msg: Message, state: FSMContext,
@@ -68,8 +65,6 @@ async def process_not_entry(msg: Message):
                           'и пользуйся клавиатурой',
                           reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='/start')]],
                                                            resize_keyboard=True))
-
-
 
 
 @router.message()

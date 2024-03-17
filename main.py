@@ -1,9 +1,9 @@
 import asyncio
 
-from db_scripts.create_db import create_database
-from loader import bot, dp, scheduler
-from handlers import handlers
 from database.engine import create_db, insert_db, session_maker
+from db_scripts.create_db import create_database
+from handlers import handlers
+from loader import bot, dp
 from middlewares.db import DataBaseSession
 
 
@@ -24,7 +24,6 @@ async def main() -> None:
     dp.startup.register(on_startup)
     dp.shutdown.register(on_shutdown)
     dp.update.middleware(DataBaseSession(session_pool=session_maker))
-    scheduler.start()
 
     await bot.delete_webhook(drop_pending_updates=True)
     wb_info = await bot.get_webhook_info()

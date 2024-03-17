@@ -1,7 +1,7 @@
 import psycopg2
 
 from psycopg2 import sql
-from config_data.config import _CONFIG, DatabaseConfig
+from config_data.config import _CONFIG
 
 
 def create_database():

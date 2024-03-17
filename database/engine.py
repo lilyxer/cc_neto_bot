@@ -1,9 +1,9 @@
 import aiofiles
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
 from config_data.config import _CONFIG
-from database.models import Base
-from database.models import User, Word
+from database.models import Base, User, Word
 
 
 engine = create_async_engine(_CONFIG.db.DSN()) # , echo=True)

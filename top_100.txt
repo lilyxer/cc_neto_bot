@@ -1,0 +1,199 @@
+1.   To read – читать
+
+2.   To write – писать
+
+3.   To listen to – слушать
+
+4.   To watch – смотреть
+
+5.   To make – создавать (делать)
+
+6.   To do – делать
+
+7.   To cook – готовить
+
+8.   To answer – отвечать
+
+9.   To become – становиться
+
+10. To play – играть
+
+11. To live – жить
+
+12. To travel – путешествовать
+
+13. To like – нравится
+
+14. To give – давать
+
+15. To want – хотеть
+
+16. To go – идти
+
+17. To think – думать
+
+18. To take – брать
+
+19. To get – получать
+
+20. To come – приходить
+
+21. To see – видеть
+
+22. To find – находить
+
+23. To feel – чувствовать
+
+24. To know – знать
+
+25. To learn – учить
+
+26. To study – учить
+
+27. To help – помогать
+
+28. To say – говорить
+
+29. To hear – слышать
+
+30. Day – день
+
+31. Night – ночь
+
+32. Week – неделя
+
+33. Year – год
+
+34. Month – месяц
+
+35. Child – ребенок
+
+36. World – мир
+
+37. Family – семья
+
+38. Parents – родители
+
+39. Brother – брат
+
+40. Sister – сестра
+
+41. Home – дом
+
+42. Mother – мама
+
+43. Father – папа
+
+44. Friend – друг
+
+45. Small – маленький
+
+46. Big – большой
+
+47. Short – короткий
+
+48. Long – длинный
+
+49. Beautiful –красивый
+
+50. Ugly – страшный
+
+51. Strange – странный
+
+52. Comfortable – комфортный
+
+53. Easy – легкий
+
+54. Difficult – сложный
+
+55. Always –всегда
+
+56. Never – никогда
+
+57. Old – старый
+
+58. New – новый
+
+59. Here – здесь
+
+60. There – там
+
+61. Street – улица
+
+62. River – река
+
+63. Breakfast – завтрак
+
+64. Dinner – ужин
+
+65. Meat – мясо
+
+66. Bread – хлеб
+
+67. Milk – молоко
+
+68. Tea – чай
+
+69. Water – вода
+
+70. Advice – совет
+
+71. Any – любой
+
+72. Clothes – одежда
+
+73. Colour – цвет
+
+74. Paper – бумага
+
+75. School – школа
+
+76. Teacher – учитель
+
+77. University – университет
+
+78. Job – работа
+
+79. Flower – цветок
+
+80. Grass – трава
+
+81. Sky – небо
+
+82. Evening – вечер
+
+83. Morning – утро
+
+84. When – когда
+
+85. Which – который
+
+86. Where – где
+
+87. How – как
+
+88. Can – мочь
+
+89. Need – нуждаться
+
+90. Should – следует
+
+91. Picture – картина
+
+92. Theater – театр
+
+93. Money – деньги
+
+94. Between – между
+
+95. Over – над
+
+96. Again – снова
+
+97. Warm – тепло
+
+98. Cold – холодно
+
+99. Today – сегодня
+
+100. Yesterday – вчера

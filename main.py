@@ -1,22 +1,30 @@
 import asyncio
 
-from aiogram import Bot, Dispatcher
-from aiogram.client.bot import DefaultBotProperties
-
-from config_data.config import load_config, Config
 from db_scripts.create_db import create_database
+from loader import bot, dp, scheduler
 from handlers import handlers
-from classes.classes import PostgresDB
+from database.engine import create_db, insert_db, session_maker
+from middlewares.db import DataBaseSession
 
 
-async def main(_config: Config) -> None:
+STATUS_DB = True
 
-    bot = Bot(token=_config.tg_bot.token, default=DefaultBotProperties(parse_mode='HTML'))
-    dp = Dispatcher()
+async def on_startup(bot):
+    if STATUS_DB:
+        await create_db()
+        await insert_db()
+    print('запускаемся...\n')
 
-    db = PostgresDB(_config.db.DSN)
+async def on_shutdown(bot):
+    print('Бот прекратил работу!')
 
+async def main() -> None:
     dp.include_router(handlers.router)
+
+    dp.startup.register(on_startup)
+    dp.shutdown.register(on_shutdown)
+    dp.update.middleware(DataBaseSession(session_pool=session_maker))
+    scheduler.start()
 
     await bot.delete_webhook(drop_pending_updates=True)
     wb_info = await bot.get_webhook_info()
@@ -28,8 +36,5 @@ async def main(_config: Config) -> None:
 
 
 if __name__ == '__main__':
-    _config = load_config()
-    if create_database(_config.db):
-        ...
-    print('запускаемся...\n')
-    asyncio.run(main(_config))
+    STATUS_DB = create_database()
+    asyncio.run(main())

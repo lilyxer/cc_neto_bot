@@ -11,7 +11,7 @@ class DatabaseConfig:
     db_port: str
 
     def DSN(self) -> str:
-        return (f'postgresql://{self.db_user}:{self.db_password}@'
+        return (f'postgresql+asyncpg://{self.db_user}:{self.db_password}@'
                 f'{self.db_host}:{self.db_port}/{self.database}')
 
 
@@ -37,6 +37,9 @@ def load_config(path: str|None = None) -> Config:
                                db_password=env('db_password'),
                                db_port=env('db_port'))
         )
+
+_CONFIG = load_config()
+
 
 if __name__ == '__main__':
     conf = load_config()

@@ -6,13 +6,13 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import CommandStart, StateFilter
 from aiogram.fsm.state import default_state
-from keyboards.keyboards import BotKeyBoardStart, BotKeyBoard, BotKeyBoardProgres
-from sqlalchemy import select, desc, insert
+from keyboards.keyboards import BotKeyBoardStart, BotKeyBoard, BotKeyBoardProgres, BotKeyBoardCancel
+from sqlalchemy import select, delete, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from states.states import FSMInProgress
 
 from lexicon.lexicon import answers
-from core.scripts import get_samples, get_words
+from core.scripts import get_samples, get_words, parse_words
 from database.models import User, Word, UserAddWord
 
 
@@ -47,6 +47,76 @@ async def process_in_learn(msg: Message, session: AsyncSession):
     await msg.answer(text=f'Пробуем, нажми на верный ответ для слова:\n{words[0]}',
                      reply_markup=kb)
 
+
+@router.message(F.text.in_({'Удалить слово🔙', 'Добавить слово ➕'}),
+                StateFilter(FSMInProgress.progress))
+async def process_enter_to_add_word(msg: Message, state: FSMContext):
+    if msg.text == 'Добавить слово ➕':
+        await msg.answer(text=answers['Добавление'], reply_markup=BotKeyBoardCancel()())
+        await state.set_state(FSMInProgress.add_word)
+    else:
+        await msg.answer(text=answers['Удаление'], reply_markup=BotKeyBoardCancel()())
+        await state.set_state(FSMInProgress.del_word)
+
+
+@router.callback_query(F.data == 'cancel', StateFilter(FSMInProgress.add_word))
+async def process_cancel(clbk: CallbackQuery, state: FSMContext):
+    await clbk.message.delete_reply_markup()
+    await state.set_state(FSMInProgress.progress)
+    await clbk.message.answer(text='Вы отменили процесс редактироваыния',
+                              reply_markup=BotKeyBoardProgres()())
+
+
+@router.message(StateFilter(FSMInProgress.add_word))
+async def process_add_word(msg: Message, state: FSMContext, session: AsyncSession):
+    msg.delete_reply_markup()
+    await state.set_state(FSMInProgress.progress)
+    if ',' in msg.text:
+        text = msg.text.split(',')
+        try:
+            for row in text:
+                eng, rus = parse_words(row)
+                new_data = UserAddWord(word_eng=eng, word_rus=rus, user_id=msg.from_user.id)
+                session.add(new_data)
+            await session.commit()
+            await msg.answer(text='ОК, едем дальше?', reply_markup=BotKeyBoardProgres()())
+        except Exception as e:
+            await session.rollback()
+            await msg.answer(
+                text=f'Ошибка при обработке: {str(e)}',
+                reply_markup=BotKeyBoardProgres()(),
+            )
+    else:
+        try:
+            eng, rus = parse_words(msg.text)
+            new_data = UserAddWord(word_eng=eng, word_rus=rus, user_id=msg.from_user.id)
+            session.add(new_data)
+            await session.commit()
+            await msg.answer(text='ОК, едем дальше?', reply_markup=BotKeyBoardProgres()())
+        except Exception as e:
+            await session.rollback()
+            await msg.answer(
+                text=f'Ошибка при обработке: {str(e)}',
+                reply_markup=BotKeyBoardProgres()(),
+            )
+
+
+@router.message(StateFilter(FSMInProgress.del_word))
+async def process_add_word(msg: Message, state: FSMContext, session: AsyncSession):
+    await state.set_state(FSMInProgress.progress)
+    async with session as db_session:
+        delete_stmt = delete(UserAddWord).where(
+            and_(UserAddWord.user_id == msg.from_user.id,
+                 UserAddWord.word_eng == msg.text.strip().capitalize())
+        )
+        result = await db_session.execute(delete_stmt)
+        deleted_rows = result.rowcount
+        if deleted_rows:
+            await db_session.commit()
+            await msg.answer(f'{msg.text} удалено', reply_markup=BotKeyBoardProgres()())
+        else:
+            await db_session.rollback()
+            await msg.answer(f'{msg.text} не найдено', reply_markup=BotKeyBoardProgres()())
 
 
 @router.callback_query()

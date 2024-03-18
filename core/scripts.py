@@ -23,3 +23,6 @@ def get_samples(set_of_words: set) -> tuple:
     choices = list(gen.values())
     shuffle(choices)
     return pair, choices
+
+def parse_words(stroke: str):
+    return (w.strip().capitalize() for w in stroke.split('-'))

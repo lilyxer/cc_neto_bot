@@ -27,3 +27,10 @@ class BotKeyBoardProgres:
         board.row(KeyboardButton(text='Дальше ⏭'))
         board.row(KeyboardButton(text='Добавить слово ➕'), KeyboardButton(text='Удалить слово🔙'))
         return board.as_markup(one_time_keyboard=True, resize_keyboard=True)
+
+
+class BotKeyBoardCancel:
+    def __call__(self) -> InlineKeyboardMarkup:
+        board = InlineKeyboardBuilder()
+        board.row(InlineKeyboardButton(text='Отмена', callback_data='cancel'))
+        return board.as_markup()

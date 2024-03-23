@@ -1,4 +1,4 @@
-from random import choice
+from random import choice, shuffle
 
 from aiogram import F, Router
 from aiogram.types import Message, CallbackQuery
@@ -7,12 +7,12 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import CommandStart, StateFilter
 from aiogram.fsm.state import default_state
 from keyboards.keyboards import BotKeyBoardStart, BotKeyBoard, BotKeyBoardProgres, BotKeyBoardCancel
-from sqlalchemy import select, delete, and_
+from sqlalchemy import select, delete, and_, func, union_all
 from sqlalchemy.ext.asyncio import AsyncSession
 from states.states import FSMInProgress
 
 from lexicon.lexicon import answers
-from core.scripts import get_samples, get_words, parse_words
+from core.scripts import parse_words
 from database.models import User, Word, UserAddWord
 
 
@@ -39,12 +39,16 @@ async def process_start_command(msg: Message, state: FSMContext,
 @router.message(F.text.in_({'Учить', 'Дальше ⏭'}), StateFilter(FSMInProgress.progress))
 async def process_in_learn(msg: Message, session: AsyncSession):
     await msg.answer(text=answers['Учить'])
-    words = await session.execute(select(Word))
-    user_words = await session.execute(select(UserAddWord).where(UserAddWord.user_id == msg.from_user.id))
-    all_words = set(words).union(set(user_words))
-    words, ans = get_samples(get_words(all_words))
-    kb = BotKeyBoard(words[1], ans)()
-    await msg.answer(text=f'Пробуем, нажми на верный ответ для слова:\n{words[0]}',
+    stmt1 = select(Word.word_eng, Word.word_rus).order_by(func.random())
+    stmt2 = (select(UserAddWord.word_eng, UserAddWord.word_rus)
+             .filter(UserAddWord.user_id == msg.from_user.id).order_by(func.random()))
+    u = union_all(stmt1, stmt2)
+    u = u.limit(4)
+    words = await session.execute(u)
+    words = words.fetchall()
+    shuffle(words)
+    kb = BotKeyBoard(choice(words)[1], [x[1] for x in words])()
+    await msg.answer(text=f'Пробуем, нажми на верный ответ для слова:\n{words[0][0]}',
                      reply_markup=kb)
 
 
